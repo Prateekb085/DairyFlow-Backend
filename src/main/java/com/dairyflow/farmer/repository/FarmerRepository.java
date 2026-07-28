@@ -8,4 +8,6 @@ import com.dairyflow.farmer.entity.Farmer;
 @Repository
 public interface FarmerRepository extends JpaRepository<Farmer, Long> {
 
+	
+	long count();
 }
