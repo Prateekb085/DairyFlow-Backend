@@ -68,4 +68,49 @@ public class MilkEntryService {
     public List<MilkEntry> getAllMilkEntries() {
         return milkEntryRepository.findAll();
     }
+ // Update Milk Entry
+    public MilkEntry updateMilkEntry(Long id, MilkEntry milkEntry) {
+
+        MilkEntry existing = milkEntryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Milk Entry Not Found"));
+
+        Farmer farmer = farmerRepository.findById(milkEntry.getFarmer().getId())
+                .orElseThrow(() -> new RuntimeException("Farmer Not Found"));
+
+        existing.setFarmer(farmer);
+        existing.setCollectionDate(milkEntry.getCollectionDate());
+        existing.setShift(milkEntry.getShift());
+        existing.setMilkType(milkEntry.getMilkType());
+        existing.setQuantity(milkEntry.getQuantity());
+        existing.setFat(milkEntry.getFat());
+
+        // Get Rate Automatically
+        System.out.println("Milk Type = [" + milkEntry.getMilkType() + "]");
+        System.out.println("Fat = [" + milkEntry.getFat() + "]");
+
+        Optional<RateMaster> rateOptional =
+                rateMasterRepository.findByMilkTypeAndFat(
+                        milkEntry.getMilkType(),
+                        milkEntry.getFat());
+
+        System.out.println("Rate Found = " + rateOptional.isPresent());
+
+        RateMaster rate = rateOptional.orElseThrow(
+                () -> new RuntimeException("Rate Not Found"));
+
+        existing.setRatePerLiter(rate.getRatePerLiter());
+
+        existing.setTotalAmount(
+                existing.getQuantity() * rate.getRatePerLiter());
+
+        return milkEntryRepository.save(existing);
+    }
+
+    // Delete Milk Entry
+    public String deleteMilkEntry(Long id) {
+
+        milkEntryRepository.deleteById(id);
+
+        return "Milk Entry Deleted Successfully";
+    }
 }

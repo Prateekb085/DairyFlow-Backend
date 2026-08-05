@@ -24,4 +24,18 @@ public class MilkEntryController {
     public List<MilkEntry> getAllMilkEntries() {
         return milkEntryService.getAllMilkEntries();
     }
+    
+    @PutMapping("/{id}")
+    public MilkEntry updateMilkEntry(
+            @PathVariable Long id,
+            @RequestBody MilkEntry milkEntry) {
+
+        return milkEntryService.updateMilkEntry(id, milkEntry);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteMilkEntry(@PathVariable Long id) {
+
+        return milkEntryService.deleteMilkEntry(id);
+    }
 }
